@@ -1,0 +1,209 @@
+#importing the libraries
+import numpy as np
+import matplotlib.pyplot as plt
+import pandas as pd
+import os
+print(os.getcwd())
+os.chdir('E:\\Locker\\Sai\\SaiHCourseNait\\DecBtch\\R_Datasets\\')
+
+# Importing the dataset
+dataset = pd.read_csv('VC_Startups.csv')
+dataset
+
+X = dataset.iloc[:, 0].values
+
+y = dataset.iloc[:, 4].values
+y
+
+import matplotlib.pyplot as plt
+plt.scatter(x,y,label='',color='k',s=100)
+plt.xlabel('R&D')
+plt.ylabel('Profit')
+plt.title('Profit vs R&D Spend')
+plt.legend()
+plt.show()
+
+
+
+x = dataset.iloc[:, 1].values
+plt.scatter(x,y,label='',color='k')
+plt.xlabel('Admin')
+plt.ylabel('Profit')
+plt.title('Profit vs Admin Spend')
+plt.legend()
+plt.show()
+
+
+
+x = dataset.iloc[:, 2].values
+plt.scatter(x,y,label='',color='k')
+plt.xlabel('Marketing')
+plt.ylabel('Profit')
+plt.title('Profit vs Marketing Spend')
+plt.legend()
+plt.show()
+
+x = dataset.iloc[:, 3].values
+plt.scatter(x,y,label='',color='k')
+plt.xlabel('State')
+plt.ylabel('Profit')
+plt.title('Profit vs State')
+plt.legend()
+plt.show()
+
+df = dataset.iloc[:, 3:5]
+df.boxplot(column='Profit',by='State')
+
+
+X = dataset.iloc[:, :-1].values
+X
+
+y = dataset.iloc[:, 4].values
+y
+
+
+from sklearn.cross_validation import train_test_split
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.2, random_state = 0)
+
+# Fitting Linear Regression to the Training set
+
+from sklearn.linear_model import LinearRegression
+
+regressor = LinearRegression()
+
+regressor.fit(X_train, y_train)
+
+'''# Predicting the Test set results
+y_pred = regressor.predict(X_test)
+y_pred'''
+
+X = dataset.iloc[:, :-2].values
+X
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.2, random_state = 0)
+
+regressor = LinearRegression()
+regressor.fit(X_train, y_train)
+
+# Predicting the Test set results
+y_pred = regressor.predict(X_test)
+y_pred
+
+print(regressor.intercept_)
+print(regressor.coef_)
+
+#import statsmodels.formula.api as sm
+#from statsmodel.api import OLS
+#sm.OLS(y,X).fit().summary()
+
+#***
+
+
+
+# Dummy Vars & Encoders
+from numpy import array
+from sklearn.preprocessing import LabelEncoder
+from sklearn.preprocessing import OneHotEncoder
+dataset2 = ['Pizza','Burger','Bread','Bread','Bread','Burger','Pizza','Burger']
+dataset2
+
+values = array(dataset2)
+print(values)
+
+label_encoder = LabelEncoder()
+
+integer_encoded = label_encoder.fit_transform(values)
+
+print(integer_encoded)
+
+integer_encoded = integer_encoded.reshape(len(integer_encoded),1)
+
+print(integer_encoded)
+
+onehot = OneHotEncoder(sparse=False)
+
+onehot_encoded = onehot.fit_transform(integer_encoded)
+
+print(onehot_encoded)
+
+
+X = dataset.iloc[:, :-1].values
+X
+y = dataset.iloc[:, 4].values
+y
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.2, random_state = 0)
+
+# Encoding categorical data
+#from sklearn.preprocessing import LabelEncoder, OneHotEncoder
+labelencoder = LabelEncoder()
+X
+
+X[:, 3] = labelencoder.fit_transform(X[:, 3])
+X
+
+onehotencoder = OneHotEncoder(categorical_features = [3])
+X
+
+X = onehotencoder.fit_transform(X).toarray()
+X
+
+# Avoiding the Dummy Variable Trap
+X = X[:, 1:]
+X
+
+# Splitting the dataset into the Training set and Test set
+from sklearn.cross_validation import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.2, random_state = 0)
+
+# Fitting Multiple Linear Regression to the Training set
+regressor = LinearRegression()
+regressor.fit(X_train, y_train)
+
+# Predicting the Test set results
+y_pred = regressor.predict(X_test)
+y_pred
+
+# Multiple Linear Regression
+X 
+
+arr = np.ones((50,1))
+arr
+X
+
+X = np.append(arr=np.ones((50,1)).astype(int), values=X,axis=1)
+X
+
+import statsmodels.formula.api as sm
+X
+X_opt = X[:,[0,1,2,3,4,5]]
+X_opt
+
+regressor_OLS = sm.OLS(endog=y, exog=X_opt).fit()
+regressor_OLS.summary()
+
+
+X_opt = X[:,[0,1,3,4,5]]
+regressor_OLS = sm.OLS(endog=y, exog=X_opt).fit()
+regressor_OLS.summary()
+
+
+X_opt = X[:,[0,3,4,5]]
+regressor_OLS = sm.OLS(endog=y, exog=X_opt).fit()
+regressor_OLS.summary()
+                 
+
+X_opt = X[:,[0,3,5]]
+regressor_OLS = sm.OLS(endog=y, exog=X_opt).fit()
+regressor_OLS.summary()
+
+
+X_opt = X[:,[0,3]]
+regressor_OLS = sm.OLS(endog=y, exog=X_opt).fit()
+regressor_OLS.summary()
+
+
+X_opt = X[:,[0,3,5]]
+regressor_OLS = sm.OLS(endog=y, exog=X_opt).fit()
+regressor_OLS.summary()
