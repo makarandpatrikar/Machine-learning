@@ -1,0 +1,426 @@
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+from sklearn import datasets, linear_model
+from mpl_toolkits.mplot3d import axes3d
+import seaborn as sns
+import plotly.plotly as py
+from sklearn.preprocessing import scale
+import sklearn.linear_model as skl_lm
+from sklearn.metrics import mean_squared_error, r2_score
+#For LR
+import statsmodels.api as sm
+
+#For LR That looks like R
+import statsmodels.formula.api as smf
+from statsmodels.graphics.mosaicplot import mosaic
+from sklearn.decomposition import PCA
+from sklearn.preprocessing import scale
+print("Packages LOADED")
+import os
+print(os.getcwd())
+
+os.chdir('C:\\Users\\Makrand\\Downloads')
+df_base = pd.read_csv("Log-Reg-Case-Study.csv")
+df_base.head()
+
+from sklearn.linear_model import LogisticRegression
+import numpy as np
+
+data = df_base
+
+arr = df_base.values
+
+X = data.ix[:,(1,10,11,13)] # ivs for train
+X
+
+y = data.ix[:,16]
+y
+
+regr = LogisticRegression()
+
+regr.fit(X, y)
+
+pred = regr.predict(X)
+pred
+
+y
+
+#Partitioning
+
+model_data = df_base.sample(frac=0.7)
+print(model_data.head())
+
+model_data = df_base.sample(frac=0.7,random_state=1234)
+print(model_data.head())
+
+df_base.shape
+
+model_data = df_base.sample(frac=0.7,random_state=1234)
+print(model_data.shape)
+
+test_data = df_base.loc[~df_base.index.isin(model_data.index), :]
+print(test_data.shape)
+
+df = model_data
+
+#Univariate Analysis
+#Capping(Handling the outliers)
+print(df.Age.describe())
+
+print(df.Age.quantile(q=0.995))
+
+print(df.Age.quantile(q=0.997))
+
+print(df.Age.quantile(q=0.999))
+
+data = df
+
+print(min(df.Age))
+print(max(df.Age))
+
+df.loc[df['Age']>75,'Age'] = 75
+
+print(min(df.Age))
+print(max(df.Age))
+
+# *** Missing Vals
+
+df.isnull().values.any()
+
+df.isnull().sum()
+
+df.isnull().sum().sum()
+
+# Housing
+
+pd.crosstab(data.Housing,data.Default_On_Payment)
+
+print(df.Housing.describe())
+
+print(df.Housing.unique())
+
+print(df.Housing.value_counts())
+
+sns.countplot(x='Housing',data=df, palette='hls')
+plt.show()
+plt.savefig('count_plot')
+
+print(df.Housing.isnull().sum())
+
+pd.crosstab(data.Housing.isnull(),data.Default_On_Payment)
+
+# Bivariate Anls
+pd.crosstab(data.Housing,data.Default_On_Payment).plot(kind='bar')
+plt.title(' Frequency of Defaulters')
+plt.xlabel('Housing')
+plt.ylabel('Frequency of Defaults')
+plt.savefig('dflt_fre_job')
+plt.show()
+
+df.Housing.isnull().sum()
+
+df['Housing'].mode()
+
+df['Housing'].mode()[0]
+
+df.Housing[df.Housing=='A152'].count()
+
+df['Housing'].fillna(df['Housing'].mode()[0],inplace = True)
+
+df.Housing[df.Housing=='A152'].count()
+
+df.Housing.isnull().sum()
+
+#*** Num of Dependents
+
+print(df.Num_Dependents.value_counts())
+
+sns.countplot(x='Num_Dependents',data=df, palette='hls')
+plt.show()
+plt.savefig('count_plot')
+
+# Bivariate Anls
+pd.crosstab(data.Num_Dependents,data.Default_On_Payment).plot(kind='bar')
+plt.title(' Frequency of Defaulters')
+
+plt.xlabel('Num_Dependents')
+plt.ylabel('Frequency of Defaults')
+plt.savefig('dflt_fre_job')
+plt.show()
+
+def get_Percent(col,df):
+grps=df.groupby([col,'Default_On_Payment'])
+df2=pd.DataFrame()
+for name,group in grps:
+df2.loc[name[0],name[1]] = len(group)
+df2['Percentage 0'] = df2[0]*100 / (df2[0] + df2[1])
+df2['Percentage 1'] = df2[1]*100 / (df2[0] + df2[1])
+print(df2.sort_values(by='Percentage 1'))
+
+cols = ['Num_Dependents']
+for col in cols:
+get_Percent(col,df_base)
+
+df.shape
+
+df = df.drop(['Customer_ID','Num_Dependents'],axis=1)
+
+df.shape
+
+#*** Job Status
+
+df['Job_Status'].unique()
+
+df['Job_Status'].describe()
+
+df['Job_Status'].isnull().sum()
+
+print(df.Job_Status.value_counts())
+
+sns.countplot(x='Job_Status',data=df, palette='hls')
+plt.show()
+plt.savefig('count_plot')
+
+df['Job_Status'].mode()
+
+pd.crosstab(data.Job_Status,data.Default_On_Payment)
+
+# Bivariate Anls
+
+pd.crosstab(data.Job_Status,data.Default_On_Payment).plot(kind='bar')
+plt.title(' Frequency of Defaulters')
+plt.xlabel('Job_Status')
+plt.ylabel('Frequency of Defaults')
+plt.savefig('dflt_fre_job')
+plt.show()
+
+cols = ['Job_Status']
+for col in cols:
+get_Percent(col,df_base)
+
+df.Job_Status[df.Job_Status=='A174'].count()
+
+df.Job_Status.isnull().sum()
+
+df['Job_Status'].fillna('A174',inplace = True)
+
+df.Job_Status.isnull().sum()
+
+df.Job_Status[df.Job_Status=='A174'].count()
+
+df.head()
+
+df.Job_Status.unique()
+print(model_data.shape)
+
+f1 = model_data['Job_Status']=='A171'
+f2 = model_data['Job_Status']=='A172'
+f3 = model_data['Job_Status']=='A173'
+
+print(model_data.shape)
+
+model_data['Dummy_A171'] = np.where(f1, 1, 0)
+
+print(model_data.shape)
+
+model_data['Dummy_A172'] = np.where(f2, 1, 0)
+model_data['Dummy_A173'] = np.where(f3, 1, 0)
+
+print(model_data.shape)
+
+model_data = model_data.drop(['Job_Status'],axis=1)
+
+model_data.shape
+
+cols = ['Purpose_Credit_Taken']
+for col in cols:
+get_Percent(col,df_base)
+
+cols =
+['Purpose_Credit_Taken','Status_Checking_Accnt','Credit_History','Job_Status','Years_At_Present_Em
+ployment','Marital_Status_Gender','Other_Debtors_Guarantors','Housing','Foreign_Worker']
+
+print(df['Purpose_Credit_Taken'].value_counts(),'\n')
+
+df2 = pd.DataFrame({'Type':list('ABBC'), 'Set':list('ZZXY')})
+print(df2)
+
+df2['color'] = np.where(df2['Set']=='Z', 'green', 'red')
+df2
+
+model_data2 = pd.DataFrame({'Type':list('ABBCDD'), 'Set':list('ZZXYWW')})
+print(model_data2)
+
+f1 = model_data2['Set']=='Z'
+f2 = model_data2['Set']=='Y'
+f3 = model_data2['Set']=='X'
+
+model_data2['color'] = np.where(np.logical_or(f1,np.logical_or(f2,f3)), 'green', 'red')
+print(model_data2)
+
+model_data2['color2'] = f1 | f2 | f3 #np.where(np.logical_or(f1,np.logical_or(f2,f3)), 'green', 'red')
+print(model_data2)
+
+model_data_bkp = model_data
+
+f1 = model_data['Purpose_Credit_Taken']=='P41'
+f2 = model_data['Purpose_Credit_Taken']=='P43'
+f3 = model_data['Purpose_Credit_Taken']=='P48'
+
+print(model_data.shape)
+
+model_data['Dummy_Purpose_Credit_Taken_Low'] = np.where(
+np.logical_or(f1,
+np.logical_or(f2,f3)), 1, 0)
+
+print(model_data.shape)
+
+data_sbst1 = model_data[['Purpose_Credit_Taken','Dummy_Purpose_Credit_Taken_Low']]
+data_sbst1.head()
+
+f1 = model_data['Purpose_Credit_Taken']=='P49'
+f2 = model_data['Purpose_Credit_Taken']=='P40'
+f3 = model_data['Purpose_Credit_Taken']=='P45'
+f4 = model_data['Purpose_Credit_Taken']=='P50'
+f5 = model_data['Purpose_Credit_Taken']=='P46'
+print(model_data.shape)
+model_data['Dummy_Purpose_Credit_Taken_High'] = np.where(
+np.logical_or(f1,
+
+np.logical_or(f2,
+np.logical_or(f3,
+np.logical_or(f4,f5)))), 1, 0)
+
+print(model_data.shape)
+
+model_data.sample(5)
+
+model_data.shape
+
+model_data = model_data.drop(['Purpose_Credit_Taken'],axis=1)
+
+model_data.shape
+
+ages = [20, 22, 25, 27, 21, 23, 37, 31, 61, 45, 41, 32]
+
+bins = [18, 25, 35, 60, 100]
+cats = pd.cut(ages, bins)
+cats
+
+type(cats)
+cats[0]
+
+pd.cut(ages,bins,right=False)
+
+bins = [0,30,50,100]
+ages = model_data.Age
+pd.cut(ages,bins,right=True)
+
+pd.crosstab(data.Age,data.Default_On_Payment)
+
+pd.crosstab(data.Age,data.Default_On_Payment).plot(kind='bar')
+plt.title(' Frequency of Defaulters')
+plt.xlabel('Age')
+plt.ylabel('Frequency of Defaults')
+plt.savefig('dflt_fre_job')
+plt.show()
+
+print(model_data.shape)
+model_data[['Age']].head()
+
+model_data_bkp2 = model_data
+bins = [0,30,100]
+ages = model_data.Age
+lbls = [1,0]
+model_data['Dummy_Age_Group'] = pd.cut(ages,labels=lbls,bins=bins)#,right=True)
+#pd.cut(ages,[1,0],[0-30,30-100])
+
+print(model_data.shape)
+model_data[['Age','Dummy_Age_Group']].head()
+
+model_data[['Age','Dummy_Age_Group']].sample(15)
+
+model_data.shape
+
+model_data = model_data.drop(['Age'],axis=1)
+
+model_data.shape
+
+X = #model_data.ix[:,(1,2,8,10,13,14,15,16,17,)] # ivs for train
+X
+
+y = model_data.ix[:,11]
+y
+
+import statsmodels.api as sm
+
+df2 = model_data._get_numeric_data()
+
+df2.head()
+
+X = df2.loc[:, df2.columns!='Default_On_Payment'].values
+X
+
+y = df2.iloc[:, 5].values
+y
+
+logit = sm.Logit( y, sm.add_constant(X) )
+lg = logit.fit()
+lg.summary()
+
+def get_significant_vars( lm ):
+var_p_vals_df = pd.DataFrame( lm.pvalues )
+var_p_vals_df['vars'] = var_p_vals_df.index
+var_p_vals_df.columns = ['pvals', 'vars']
+return list( var_p_vals_df[var_p_vals_df.pvals <= 0.05]['vars'] )
+significant_vars = get_significant_vars( lg )
+significant_vars
+
+X = df2.ix[:,(0,2,4,9)].values
+X
+
+logit = sm.Logit( y, sm.add_constant(X) )
+
+lg = logit.fit()
+lg.summary()
+
+significant_vars = get_significant_vars( lg )
+significant_vars
+
+X = df2.ix[:,(0,1,4)].values
+X
+
+logit = sm.Logit( y, sm.add_constant(X) )
+lg = logit.fit()
+lg.summary()
+
+significant_vars = get_significant_vars( lg )
+significant_vars
+
+from patsy import dmatrices
+import statsmodels.api as sm
+from statsmodels.stats.outliers_influence import variance_inflation_factor
+
+df2 = df._get_numeric_data() #drop non-numeric cols
+
+df2.head()
+
+X = df2.loc[:, df2.columns!='Default_On_Payment'].values
+X
+
+y = df2.iloc[:, 5].values
+y
+
+
+def assign_bin():
+global number_of_features, features, number_of_bin, features_percentiles, features_output
+for feature_number in range(number_of_features):
+count = 0
+for feature_value in features[feature_number]:
+for bin_number in range(number_of_bin):
+if float(features[feature_number][count]) <=
+float(features_percentiles[feature_number][bin_number]):
+features_output[feature_number][count] = bin_number
+break
+count += 1
