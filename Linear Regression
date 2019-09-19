@@ -1,21 +1,19 @@
-#importing the libraries
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 import os
 print(os.getcwd())
-os.chdir('E:\\Locker\\Sai\\SaiHCourseNait\\DecBtch\\R_Datasets\\')
+os.chdir('C:\\Users\\Makrand\\Downloads')
 
 # Importing the dataset
 dataset = pd.read_csv('VC_Startups.csv')
 dataset
 
-X = dataset.iloc[:, 0].values
+X = dataset.iloc[:, :-1].values
 
 y = dataset.iloc[:, 4].values
 y
 
-import matplotlib.pyplot as plt
 plt.scatter(x,y,label='',color='k',s=100)
 plt.xlabel('R&D')
 plt.ylabel('Profit')
@@ -43,68 +41,13 @@ plt.title('Profit vs Marketing Spend')
 plt.legend()
 plt.show()
 
-x = dataset.iloc[:, 3].values
-plt.scatter(x,y,label='',color='k')
-plt.xlabel('State')
-plt.ylabel('Profit')
-plt.title('Profit vs State')
-plt.legend()
-plt.show()
-
 df = dataset.iloc[:, 3:5]
 df.boxplot(column='Profit',by='State')
 
-
-X = dataset.iloc[:, :-1].values
-X
-
-y = dataset.iloc[:, 4].values
-y
-
-
-from sklearn.cross_validation import train_test_split
-
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.2, random_state = 0)
-
-# Fitting Linear Regression to the Training set
-
-from sklearn.linear_model import LinearRegression
-
-regressor = LinearRegression()
-
-regressor.fit(X_train, y_train)
-
-'''# Predicting the Test set results
-y_pred = regressor.predict(X_test)
-y_pred'''
-
-X = dataset.iloc[:, :-2].values
-X
-
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.2, random_state = 0)
-
-regressor = LinearRegression()
-regressor.fit(X_train, y_train)
-
-# Predicting the Test set results
-y_pred = regressor.predict(X_test)
-y_pred
-
-print(regressor.intercept_)
-print(regressor.coef_)
-
-#import statsmodels.formula.api as sm
-#from statsmodel.api import OLS
-#sm.OLS(y,X).fit().summary()
-
-#***
-
-
-
-# Dummy Vars & Encoders
 from numpy import array
 from sklearn.preprocessing import LabelEncoder
 from sklearn.preprocessing import OneHotEncoder
+
 dataset2 = ['Pizza','Burger','Bread','Bread','Bread','Burger','Pizza','Burger']
 dataset2
 
@@ -127,16 +70,6 @@ onehot_encoded = onehot.fit_transform(integer_encoded)
 
 print(onehot_encoded)
 
-
-X = dataset.iloc[:, :-1].values
-X
-y = dataset.iloc[:, 4].values
-y
-
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.2, random_state = 0)
-
-# Encoding categorical data
-#from sklearn.preprocessing import LabelEncoder, OneHotEncoder
 labelencoder = LabelEncoder()
 X
 
@@ -170,6 +103,7 @@ X
 
 arr = np.ones((50,1))
 arr
+
 X
 
 X = np.append(arr=np.ones((50,1)).astype(int), values=X,axis=1)
